@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from scipy import fft
+from numpy import fft
 import matplotlib.pyplot as plt
 
 def fft_ma_2d(ny=100, dy=1, nx=100, dx=1, mean_value=0, stdev=1, scale=[30,3], angle=0):
