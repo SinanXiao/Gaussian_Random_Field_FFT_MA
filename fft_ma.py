@@ -36,7 +36,7 @@ def fft_ma_2d(ny=100, dy=1, nx=100, dx=1, mean_value=0, stdev=1, scale=[30,3], a
     x = np.arange(0, nx_c) * dx
     y = np.arange(0, ny_c) * dy
     
-    X, Y = np.meshgrid(x,y)
+    X, Y = np.meshgrid(x,y, indexing='ij') # ‘ij’ - matrix indexing
     
     h_x = X - x[math.ceil(nx_c/2)]
     h_y = Y - y[math.ceil(ny_c/2)]
@@ -46,7 +46,7 @@ def fft_ma_2d(ny=100, dy=1, nx=100, dx=1, mean_value=0, stdev=1, scale=[30,3], a
     
     # covariance 
     cov = cal_cov(np.zeros(ndim), coords, stdev, scale, angle)
-    cov = cov.reshape(ny_c, nx_c)
+    cov = cov.reshape(nx_c, ny_c)
     
     # FFT
     fftC = fft.fft2(fft.fftshift(cov))
@@ -57,7 +57,7 @@ def fft_ma_2d(ny=100, dy=1, nx=100, dx=1, mean_value=0, stdev=1, scale=[30,3], a
     
     # Invere FFT
     out = fft.ifft2(np.sqrt(fftC) * fft.fft2(z_rand))
-    random_field = np.real(out[0:ny, 0:nx]) + mean_value
+    random_field = np.real(out[0:nx, 0:ny]) + mean_value
     
     return random_field
 
@@ -92,7 +92,7 @@ def fft_ma_3d(ny=50, dy=1, nx=50, dx=1, nz=50, dz=1, mean_value=0, stdev=1, scal
     y = np.arange(0, ny_c) * dy
     z = np.arange(0, nz_c) * dz
     
-    X, Y, Z = np.meshgrid(x,y,z)
+    X, Y, Z = np.meshgrid(x,y,z, indexing='ij') # ‘ij’ - matrix indexing
     
     h_x = X - x[math.ceil(nx_c/2)]
     h_y = Y - y[math.ceil(ny_c/2)]
@@ -103,7 +103,7 @@ def fft_ma_3d(ny=50, dy=1, nx=50, dx=1, nz=50, dz=1, mean_value=0, stdev=1, scal
     
     # covariance 
     cov = cal_cov(np.zeros(ndim), coords, stdev, scale, angle)
-    cov = cov.reshape(ny_c, nx_c, nz_c)
+    cov = cov.reshape(nx_c, ny_c, nz_c)
     
     # FFT
     fftC = fft.fftn(fft.fftshift(cov))
@@ -114,7 +114,7 @@ def fft_ma_3d(ny=50, dy=1, nx=50, dx=1, nz=50, dz=1, mean_value=0, stdev=1, scal
     
     # Invere FFT
     out = fft.ifftn(np.sqrt(fftC) * fft.fftn(z_rand))
-    random_field = np.real(out[0:ny,0:nx,0:nz]) + mean_value
+    random_field = np.real(out[0:nx,0:ny,0:nz]) + mean_value
     
     return random_field
     
@@ -193,12 +193,28 @@ if __name__ == "__main__":
     # 2D
     random_field = fft_ma_2d(nx=100, ny=100, scale=[30,3], angle=0)
     plt.figure()
-    plt.pcolor(random_field)
+    plt.pcolor(random_field.T) # use transform for plotting
     plt.show()
 
     # 3D
-    random_field = fft_ma_3d(nx=50, ny=50, nz=50, scale=[20,2,5], angle=[0,0,0])
+    random_field = fft_ma_3d(nx=50, ny=100, nz=75, scale=[25,2,2], angle=[0,0,0])
     for i in range(0,30,10):
         plt.figure()
-        plt.pcolor(random_field[:,:,i])
+        plt.pcolor(random_field[:,:,i].T) # use transform for plotting
+        plt.show()
+    
+    for i in range(0,30,10):
+        plt.figure()
+        plt.pcolor(random_field[:,i,:].T) # use transform for plotting
+        plt.show()
+    
+    random_field = fft_ma_3d(nx=50, ny=100, nz=75, scale=[2,25,2], angle=[0,0,0])
+    for i in range(0,30,10):
+        plt.figure()
+        plt.pcolor(random_field[:,:,i].T) # use transform for plotting
+        plt.show()
+    
+    for i in range(0,30,10):
+        plt.figure()
+        plt.pcolor(random_field[i,:,:].T) # use transform for plotting
         plt.show()
