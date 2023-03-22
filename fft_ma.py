@@ -234,12 +234,12 @@ if __name__ == "__main__":
     # Use PyVista for 3D plotting
     import pyvista as pv
     grid = pv.UniformGrid()
-
+    
+    random_field = fft_ma_3d(nx=50, ny=100, nz=75, scale=[25,2,2], angle=[0,0,0])
     grid.dimensions = np.array(random_field.shape)
     grid.origin = (0, 0, 0)  # The bottom left corner of the data set
     grid.spacing = (1, 1, 1)  # These are the cell sizes along each axis
     
-    random_field = fft_ma_3d(nx=50, ny=100, nz=75, scale=[25,2,2], angle=[0,0,0])
     grid.point_data["values"] = random_field.flatten(order="F")  # Flatten the array
     grid.contour().plot()
     # grid.plot()
