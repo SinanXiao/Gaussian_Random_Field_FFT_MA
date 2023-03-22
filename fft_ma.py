@@ -45,7 +45,7 @@ def fft_ma_2d(ny=100, dy=1, nx=100, dx=1, mean_value=0, stdev=1, scale=[30,3], a
     coords = np.stack((h_x.ravel(), h_y.ravel()), axis=1)
     
     # covariance 
-    cov = cal_cov(np.zeros(ndim), coords, stdev, scale, angle)
+    cov = cal_cov_2d(np.zeros(ndim), coords, stdev, scale, angle)
     cov = cov.reshape(nx_c, ny_c)
     
     # FFT
@@ -102,7 +102,7 @@ def fft_ma_3d(ny=50, dy=1, nx=50, dx=1, nz=50, dz=1, mean_value=0, stdev=1, scal
     coords = np.stack((h_x.ravel(), h_y.ravel(), h_z.ravel()), axis=1)
     
     # covariance 
-    cov = cal_cov(np.zeros(ndim), coords, stdev, scale, angle)
+    cov = cal_cov_3d(np.zeros(ndim), coords, stdev, scale, angle)
     cov = cov.reshape(nx_c, ny_c, nz_c)
     
     # FFT
@@ -125,57 +125,68 @@ def nextpow2(x):
     return 1 if x == 0 else 2**math.ceil(math.log2(x))
     
     
-def cal_cov(pos1, pos2, stdev, scale, angle):
+def cal_cov_2d(pos1, pos2, stdev, scale, angle):
     """
-    calculate covariance matrix
+    calculate covariance matrix - 2d
     """
-    ndim = pos2.shape[1]
     
     # difference between two positions
     dp = pos2 - pos1
     
-    if ndim == 2:
-        # ratation
-        angle = angle * math.pi / 180
-        RotMat = np.array([[math.cos(angle), -math.sin(angle)], \
-                           [math.sin(angle),  math.cos(angle)]])
-        dp = dp @ RotMat.T 
-        
-        # scale
-        dp = dp/np.array(scale)
+    # ratation
+    angle = angle * math.pi / 180
+    RotMat = np.array([[math.cos(angle), -math.sin(angle)], \
+                       [math.sin(angle),  math.cos(angle)]])
+    dp = dp @ RotMat.T 
     
-        # distance 
-        dist = np.sqrt(dp[:,0]**2 + dp[:,1]**2)
-        
-    elif ndim == 3:
-        if len(angle) != 3:
-            #raise ValueError("angle must have 3 element")
-            print(" 'angle' doesn't have 3 elements")
-            print(" use angle = [0,0,0]")
-            angle = [0,0,0]
-        
-        # ratation 
-        angle = np.array(angle) * math.pi / 180
-        
-        T1 = np.array([[1,                  0,                   0], \
-                       [0, math.cos(angle[2]), -math.sin(angle[2])], \
-                       [0, math.sin(angle[2]),  math.cos(angle[2])]])
-        T2 = np.array([[ math.cos(angle[1]), 0, math.sin(angle[1])], \
-                       [0,                1,                     0], \
-                       [-math.sin(angle[1]), 0, math.cos(angle[1])]])
-        T3 = np.array([[math.cos(angle[0]), -math.sin(angle[0]), 0], \
-                       [math.sin(angle[0]),  math.cos(angle[0]), 0], \
-                       [0,               0,                      1]])
-        
-        RotMat = T1@T2@T3
-        dp = dp @ RotMat.T 
-        
-        # scale
-        dp = dp/np.array(scale)
+    # scale
+    dp = dp/np.array(scale)
+
+    # distance 
+    dist = np.sqrt(dp[:,0]**2 + dp[:,1]**2)
+
+    # covariance
+    semiv = semi_variogram(dist, stdev)
+    cov = stdev**2 - semiv
     
-        # distance 
-        dist = np.sqrt(np.sum(dp**2,axis=1))
-        
+    return cov
+
+def cal_cov_3d(pos1, pos2, stdev, scale, angle):
+    """
+    calculate covariance matrix - 3d
+    """
+    
+    # difference between two positions
+    dp = pos2 - pos1
+    
+    if len(angle) != 3:
+        #raise ValueError("angle must have 3 element")
+        print(" 'angle' doesn't have 3 elements")
+        print(" use angle = [0,0,0]")
+        angle = [0,0,0]
+    
+    # ratation 
+    angle = np.array(angle) * math.pi / 180
+    
+    T1 = np.array([[1,                  0,                   0], \
+                   [0, math.cos(angle[2]), -math.sin(angle[2])], \
+                   [0, math.sin(angle[2]),  math.cos(angle[2])]])
+    T2 = np.array([[ math.cos(angle[1]), 0, math.sin(angle[1])], \
+                   [0,                1,                     0], \
+                   [-math.sin(angle[1]), 0, math.cos(angle[1])]])
+    T3 = np.array([[math.cos(angle[0]), -math.sin(angle[0]), 0], \
+                   [math.sin(angle[0]),  math.cos(angle[0]), 0], \
+                   [0,               0,                      1]])
+    
+    RotMat = T1@T2@T3
+    dp = dp @ RotMat.T 
+    
+    # scale
+    dp = dp/np.array(scale)
+
+    # distance 
+    dist = np.sqrt(np.sum(dp**2,axis=1))
+    
     # covariance
     semiv = semi_variogram(dist, stdev)
     cov = stdev**2 - semiv
@@ -190,6 +201,7 @@ def semi_variogram(h, stdev):
     
 if __name__ == "__main__":
     
+    # Test
     # 2D
     random_field = fft_ma_2d(nx=100, ny=100, scale=[30,3], angle=0)
     plt.figure()
@@ -218,3 +230,15 @@ if __name__ == "__main__":
         plt.figure()
         plt.pcolor(random_field[i,:,:].T) # use transform for plotting
         plt.show()
+    
+    # Use PyVista for 3D plotting
+    import pyvista as pv
+    grid = pv.UniformGrid()
+
+    grid.dimensions = np.array(random_field.shape)
+    grid.origin = (0, 0, 0)  # The bottom left corner of the data set
+    grid.spacing = (1, 1, 1)  # These are the cell sizes along each axis
+    
+    random_field = fft_ma_3d(nx=50, ny=100, nz=75, scale=[25,2,2], angle=[0,0,0])
+    grid.point_data["values"] = random_field.flatten(order="F")  # Flatten the array
+    grid.plot()
