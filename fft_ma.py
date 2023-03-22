@@ -3,12 +3,12 @@ import math
 from numpy import fft
 import matplotlib.pyplot as plt
 
-def fft_ma_2d(ny=100, dy=1, nx=100, dx=1, mean_value=0, stdev=1, scale=[30,3], angle=0):
+def fft_ma_2d(nx=100, dx=1, ny=100, dy=1, mean_value=0, stdev=1, scale=[30,3], angle=0):
     """
     simulating stationary Gaussian field over an 'ny' times 'nx' grid
     INPUT:   
-                  ny: discretization size in 'y'
                   nx: discretization size in 'x'
+                  ny: discretization size in 'y'
                   
                   dx: length of each cell in 'x'
                   dy: length of each cell in 'y'
@@ -61,13 +61,13 @@ def fft_ma_2d(ny=100, dy=1, nx=100, dx=1, mean_value=0, stdev=1, scale=[30,3], a
     
     return random_field
 
-def fft_ma_3d(ny=50, dy=1, nx=50, dx=1, nz=50, dz=1, mean_value=0, stdev=1, scale=[20,2,2], angle=[0,0,0]):
+def fft_ma_3d(nx=50, dx=1, ny=50, dy=1, nz=50, dz=1, mean_value=0, stdev=1, scale=[20,2,2], angle=[0,0,0]):
     """
     simulating stationary Gaussian field over an 'ny'*'nx'*'nz' grid
     INPUT:   
-                  ny: discretization size in 'y'
                   nx: discretization size in 'x'
-                  xz: discretization size in 'z'
+                  ny: discretization size in 'y'
+                  nz: discretization size in 'z'
                   
                   dx: length of each cell in 'x'
                   dy: length of each cell in 'y'
