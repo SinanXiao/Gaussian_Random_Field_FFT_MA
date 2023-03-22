@@ -61,7 +61,7 @@ def fft_ma_2d(ny=100, dy=1, nx=100, dx=1, mean_value=0, stdev=1, scale=[30,3], a
     
     return random_field
 
-def fft_ma_3d(ny=50, dy=1, nx=50, dx=1, nz=50, dz=1, mean_value=0, stdev=1, scale=[20,2,2], angle=0):
+def fft_ma_3d(ny=50, dy=1, nx=50, dx=1, nz=50, dz=1, mean_value=0, stdev=1, scale=[20,2,2], angle=[0,0,0]):
     """
     simulating stationary Gaussian field over an 'ny'*'nx'*'nz' grid
     INPUT:   
