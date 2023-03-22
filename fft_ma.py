@@ -241,4 +241,5 @@ if __name__ == "__main__":
     
     random_field = fft_ma_3d(nx=50, ny=100, nz=75, scale=[25,2,2], angle=[0,0,0])
     grid.point_data["values"] = random_field.flatten(order="F")  # Flatten the array
-    grid.plot()
+    grid.contour().plot()
+    # grid.plot()
