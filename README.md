@@ -6,8 +6,10 @@ This is modified from [mGstat](https://github.com/cultpenguin/mGstat)
 
 Examples:
 
-2D: ![2D random field](figures/random_field_2d.png)
+2D: 
+![2D random field](figures/random_field_2d.png)
 
-3D: ![3D random field](figures/random_filed_3d.png)
+3D: 
+![3D random field](figures/random_field_3d.png)
 
 
