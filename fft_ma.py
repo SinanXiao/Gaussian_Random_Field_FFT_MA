@@ -134,10 +134,11 @@ def cal_cov_2d(pos1, pos2, stdev, scale, angle):
     dp = pos2 - pos1
     
     # ratation
-    angle = angle * math.pi / 180
-    RotMat = np.array([[math.cos(angle), -math.sin(angle)], \
-                       [math.sin(angle),  math.cos(angle)]])
-    dp = dp @ RotMat.T 
+    if angle != 0:
+        angle = angle * math.pi / 180
+        RotMat = np.array([[math.cos(angle), -math.sin(angle)], \
+                           [math.sin(angle),  math.cos(angle)]])
+        dp = dp @ RotMat.T 
     
     # scale
     dp = dp/np.array(scale)
@@ -167,19 +168,20 @@ def cal_cov_3d(pos1, pos2, stdev, scale, angle):
     
     # ratation 
     angle = np.array(angle) * math.pi / 180
-    
-    T1 = np.array([[1,                  0,                   0], \
-                   [0, math.cos(angle[2]), -math.sin(angle[2])], \
-                   [0, math.sin(angle[2]),  math.cos(angle[2])]])
-    T2 = np.array([[ math.cos(angle[1]), 0, math.sin(angle[1])], \
-                   [0,                1,                     0], \
-                   [-math.sin(angle[1]), 0, math.cos(angle[1])]])
-    T3 = np.array([[math.cos(angle[0]), -math.sin(angle[0]), 0], \
-                   [math.sin(angle[0]),  math.cos(angle[0]), 0], \
-                   [0,               0,                      1]])
-    
-    RotMat = T1@T2@T3
-    dp = dp @ RotMat.T 
+    if (angle != 0).any():
+        
+        T1 = np.array([[1,                  0,                   0], \
+                       [0, math.cos(angle[2]), -math.sin(angle[2])], \
+                       [0, math.sin(angle[2]),  math.cos(angle[2])]])
+        T2 = np.array([[ math.cos(angle[1]), 0, math.sin(angle[1])], \
+                       [0,                1,                     0], \
+                       [-math.sin(angle[1]), 0, math.cos(angle[1])]])
+        T3 = np.array([[math.cos(angle[0]), -math.sin(angle[0]), 0], \
+                       [math.sin(angle[0]),  math.cos(angle[0]), 0], \
+                       [0,               0,                      1]])
+        
+        RotMat = T1@T2@T3
+        dp = dp @ RotMat.T
     
     # scale
     dp = dp/np.array(scale)
