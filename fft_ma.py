@@ -207,30 +207,30 @@ if __name__ == "__main__":
     # 2D
     random_field = fft_ma_2d(nx=100, ny=100, scale=[30,3], angle=0)
     plt.figure()
-    plt.pcolor(random_field.T) # use transform for plotting
+    plt.pcolor(random_field.T) # use transpose for plotting
     plt.show()
 
     # 3D
     random_field = fft_ma_3d(nx=50, ny=100, nz=75, scale=[25,2,2], angle=[0,0,0])
     for i in range(0,30,10):
         plt.figure()
-        plt.pcolor(random_field[:,:,i].T) # use transform for plotting
+        plt.pcolor(random_field[:,:,i].T) # use transpose for plotting
         plt.show()
     
     for i in range(0,30,10):
         plt.figure()
-        plt.pcolor(random_field[:,i,:].T) # use transform for plotting
+        plt.pcolor(random_field[:,i,:].T) # use transpose for plotting
         plt.show()
     
     random_field = fft_ma_3d(nx=50, ny=100, nz=75, scale=[2,25,2], angle=[0,0,0])
     for i in range(0,30,10):
         plt.figure()
-        plt.pcolor(random_field[:,:,i].T) # use transform for plotting
+        plt.pcolor(random_field[:,:,i].T) # use transpose for plotting
         plt.show()
     
     for i in range(0,30,10):
         plt.figure()
-        plt.pcolor(random_field[i,:,:].T) # use transform for plotting
+        plt.pcolor(random_field[i,:,:].T) # use transpose for plotting
         plt.show()
     
     # Use PyVista for 3D plotting
