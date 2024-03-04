@@ -235,8 +235,7 @@ if __name__ == "__main__":
     
     # Use PyVista for 3D plotting
     import pyvista as pv
-    # grid = pv.UniformGrid() # old version
-    grid = pv.ImageData()
+    grid = pv.UniformGrid()
     
     random_field = fft_ma_3d(nx=50, ny=100, nz=75, scale=[25,2,2], angle=[0,0,0])
     grid.dimensions = np.array(random_field.shape)
